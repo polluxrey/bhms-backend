@@ -15,7 +15,7 @@ class Command(BaseCommand):
                 "title": "Send Payment",
                 "description": "Easily pay your rent through cash or GCash.",
                 "image": "uploads/send-payment-banner.png",
-                "slug": "/pay",
+                "redirect_url": "/pay",
                 "order": 1,
                 "is_active": True
             },
@@ -23,7 +23,7 @@ class Command(BaseCommand):
                 "title": "Payment History",
                 "description": "View and track all your previous rent payments in one place.",
                 "image": "uploads/payment-history-banner.png",
-                "slug": "/payments",
+                "redirect_url": "/payments",
                 "order": 2,
                 "is_active": True
             },
@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 "title": "Submit a Request",
                 "description": "Need maintenance, cleaning, or have a concern? Send your request here.",
                 "image": "uploads/request-banner.png",
-                "slug": "/request",
+                "redirect_url": "/request",
                 "order": 3,
                 "is_active": False
             }
@@ -64,14 +64,10 @@ class Command(BaseCommand):
                 module_data['image'] = uploaded_file
 
                 module, created = Module.objects.get_or_create(
-                    slug=module_data['slug'],
+                    title=module_data['title'],
                     defaults=module_data
                 )
 
-                if created:
-                    print(f"✅ Successfully created new Module: {module.title}")
-                else:
-                    print(
-                        f"🔄 Module already exists (slug: {module.slug}). Skipping.")
+                print(f"✅ Successfully created new Module: {module.title}")
             except Exception as e:
                 print(f"❌ Error creating module '{module['title']}': {e}")
