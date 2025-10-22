@@ -1,0 +1,11 @@
+Hello,
+
+A new request has been submitted.
+
+Reference Number: {{ reference_number }}
+Requested by: {{ full_name }}
+Request Type: {{ request_type }}
+Description: {{ description }}
+
+Thank you,
+{{ boarding_house_name | safe }}

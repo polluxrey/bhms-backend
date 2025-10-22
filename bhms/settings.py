@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "config",
     "module",
+    "otp",
     "boarder",
     "payment",
+    "service_request",
     "rest_framework",
     "corsheaders"
 ]
@@ -61,7 +64,7 @@ ROOT_URLCONF = 'bhms.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "bhms/templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,3 +137,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Allow your frontend to connect
 CORS_ALLOW_ALL_ORIGINS = True
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "reysboardinghouse@gmail.com"
+EMAIL_HOST_PASSWORD = 'gkcyplhxkonxewaj'

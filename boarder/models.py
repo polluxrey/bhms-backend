@@ -38,6 +38,12 @@ class Boarder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def full_name(self):
+        if self.middle_name:
+            return f"{self.first_name} {self.middle_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name}"
+
     def save(self, *args, **kwargs):
         if self._state.adding:
             self.last_name = clean_text(self.last_name)

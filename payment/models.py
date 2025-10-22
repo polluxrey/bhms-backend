@@ -1,6 +1,7 @@
 
 from django.db import models
 from bhms.models import BaseCodeName
+from bhms.choices import PaymentStatus
 from bhms.utils import path_and_rename
 from boarder.models import Boarder
 
@@ -22,6 +23,9 @@ class Payment(models.Model):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=255, blank=True)
+    status = models.CharField(
+        max_length=10, choices=PaymentStatus.choices,
+        default=PaymentStatus.PENDING_REVIEW)
 
     receipt = models.ImageField(
         upload_to=path_and_rename("payments"),

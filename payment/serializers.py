@@ -9,6 +9,17 @@ class PaymentSerializer(serializers.ModelSerializer):
                   "amount", "description", "receipt"]
 
 
+class PaymentListSerializer(serializers.ModelSerializer):
+    date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Payment
+        fields = ["boarder", "date", "amount", "status"]
+
+    def get_date(self, obj):
+        return obj.created_at.date().strftime("%Y-%m-%d")
+
+
 class PaymentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentType

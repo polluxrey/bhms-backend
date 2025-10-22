@@ -1,0 +1,13 @@
+Dear {{ first_name }},
+
+Your request has been successfully submitted.
+
+Reference Number: {{ reference_number }}
+Request Type: {{ request_type }}
+Description: {{ description }}
+
+You can check the status of your request anytime through the app
+by navigating to the 'View Requests' module.
+
+Thank you,
+{{ boarding_house_name | safe }}

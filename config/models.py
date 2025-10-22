@@ -18,6 +18,11 @@ class BrandingConfig(models.Model):
 
         return super().save(*args, **kwargs)
 
+    @classmethod
+    def get_app_name(cls):
+        instance = cls.objects.first()
+        return instance.app_name if instance else "Boarding House Management System"
+
     def __str__(self):
         return "Branding config added!"
 
