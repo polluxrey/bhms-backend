@@ -12,7 +12,7 @@ class Boarder(models.Model):
     middle_name = models.CharField(max_length=100, blank=True, null=True)
 
     # Demographics
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(blank=True, null=True)
     sex = models.CharField(max_length=1, choices=Sex.choices)
 
     # Address

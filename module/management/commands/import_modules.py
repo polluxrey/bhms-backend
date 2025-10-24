@@ -11,28 +11,36 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         modules = [
+            # {
+            #     "title": "Send Payment",
+            #     "description": "Easily pay your rent through cash or GCash.",
+            #     "image": "uploads/send-payment-banner.png",
+            #     "redirect_url": "/pay",
+            #     "order": 1,
+            #     "is_active": True
+            # },
+            # {
+            #     "title": "Payment History",
+            #     "description": "View and track all your previous rent payments in one place.",
+            #     "image": "uploads/payment-history-banner.png",
+            #     "redirect_url": "/payments",
+            #     "order": 2,
+            #     "is_active": True
+            # },
+            # {
+            #     "title": "Submit a Request",
+            #     "description": "Need maintenance, cleaning, or have a concern? Send your request here.",
+            #     "image": "uploads/request-banner.png",
+            #     "redirect_url": "/request",
+            #     "order": 3,
+            #     "is_active": False
+            # },
             {
-                "title": "Send Payment",
-                "description": "Easily pay your rent through cash or GCash.",
-                "image": "uploads/send-payment-banner.png",
-                "redirect_url": "/pay",
-                "order": 1,
-                "is_active": True
-            },
-            {
-                "title": "Payment History",
-                "description": "View and track all your previous rent payments in one place.",
-                "image": "uploads/payment-history-banner.png",
-                "redirect_url": "/payments",
-                "order": 2,
-                "is_active": True
-            },
-            {
-                "title": "Submit a Request",
-                "description": "Need maintenance, cleaning, or have a concern? Send your request here.",
-                "image": "uploads/request-banner.png",
-                "redirect_url": "/request",
-                "order": 3,
+                "title": "View Request",
+                "description": "Check your request status.",
+                "image": "uploads/view-request-banner.png",
+                "redirect_url": "/requests",
+                "order": 4,
                 "is_active": False
             }
         ]

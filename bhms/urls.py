@@ -18,6 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +30,9 @@ urlpatterns = [
     path("api/module/", include("module.urls")),
     path("api/boarder/", include("boarder.urls")),
     path("api/payment/", include("payment.urls")),
-    path("api/request/", include("service_request.urls"))
+    path("api/request/", include("service_request.urls")),
+    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 if settings.DEBUG:
