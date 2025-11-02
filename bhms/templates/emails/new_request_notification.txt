@@ -1,4 +1,4 @@
-Hello,
+Dear {{ owner_first_name }},
 
 A new request has been submitted.
 

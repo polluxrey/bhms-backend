@@ -1,0 +1,13 @@
+Dear {{ first_name }},
+
+Your payment has been {{ status|upper }}.
+
+Amount: ₱{{ amount|floatformat:2 }}
+Payment Type: {{ payment_type_name }}
+Payment Method: {{ payment_method_name }}
+Date Submitted : {{ date }}
+
+You can view the details in the app by navigating to the "Payment History" section.
+
+Thank you,
+{{ boarding_house_name | safe }}

@@ -1,0 +1,1 @@
+[From RBH] Your payment of PHP{{ amount }} for {{ payment_type_name|upper }} has been {{ status|upper }}. You may check the app for details.

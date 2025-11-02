@@ -35,7 +35,7 @@ class SendOTPAPIView(APIView):
         send_mail(
             subject='Your OTP Code',
             message=f'Your OTP is {otp_code}',
-            from_email='reysboardinghouse@gmail.com',
+            from_email=None,
             recipient_list=[boarder.email],
             fail_silently=False,
         )

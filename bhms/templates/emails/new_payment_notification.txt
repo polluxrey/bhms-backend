@@ -1,0 +1,18 @@
+Dear {{ owner_first_name }},
+
+A new payment has been submitted and is awaiting your confirmation.
+
+Payment Details:
+----------------
+Boarder Name: {{ full_name }}
+Amount: ₱{{ amount|floatformat:2 }}
+Payment Type: {{ payment_type }}
+Payment Method: {{ payment_method }}
+{% if description %}
+Description: {{ description }}
+{% endif %}
+
+Please review and confirm the payment in the system when convenient.
+
+Thank you,
+{{ boarding_house_name | safe }}

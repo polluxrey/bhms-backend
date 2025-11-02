@@ -7,6 +7,8 @@ from service_request.serializers import ServiceRequestCreateSerializer, ServiceR
 from boarder.models import Boarder
 from bhms.utils import send_email
 from bhms.choices import RequestType
+from django.conf import settings
+from users.models import User
 
 
 class ServiceRequestView(APIView):
@@ -28,16 +30,19 @@ class ServiceRequestView(APIView):
                 to=[instance.boarder.email],
                 template_name="emails/request_submitted.txt",
                 context=context,
-                from_email="reysboardinghouse@gmail.com",
+                from_email=settings.EMAIL_HOST_USER,
             )
 
-            send_email(
-                subject="New Request Submitted",
-                bcc=["polluxrey@gmail.com"],
-                template_name="emails/new_request_notification.txt",
-                context=context,
-                from_email="reysboardinghouse@gmail.com",
-            )
+            owners = User.objects.filter(groups__name="Owner")
+
+            for owner in owners:
+                send_email(
+                    subject="New Request Submitted",
+                    to=[owner.email],
+                    template_name="emails/new_request_notification.txt",
+                    context={**context, "owner_first_name": owner.first_name},
+                    from_email=settings.EMAIL_HOST_USER,
+                )
 
             return Response(
                 {

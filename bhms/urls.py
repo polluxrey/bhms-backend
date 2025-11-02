@@ -18,21 +18,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from users.views import CurrentUserView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/config/", include("config.urls")),
-    path("api/otp/", include("otp.urls")),
-    path("api/module/", include("module.urls")),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path("api/boarder/", include("boarder.urls")),
+    path("api/config/", include("config.urls")),
+    path("api/module/", include("module.urls")),
+    path("api/otp/", include("otp.urls")),
     path("api/payment/", include("payment.urls")),
     path("api/request/", include("service_request.urls")),
-    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("api/auth/", include("users.urls")),
+    path("api/users/current/", CurrentUserView.as_view(), name="current_user"),
 ]
 
 if settings.DEBUG:

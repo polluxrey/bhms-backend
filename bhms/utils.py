@@ -1,14 +1,16 @@
+from django.utils.formats import date_format
+import re
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from config.models import BrandingConfig
 import string
-from django.db.models import Model
 import random
 import os
 from uuid import uuid4
 from datetime import datetime
 from functools import wraps
-# from collections import OrderedDict
+from django.conf import settings
+import requests
 
 
 def clean_text(value, uppercase=True, lowercase=False):
@@ -64,8 +66,32 @@ def send_email(
     email.send(fail_silently=True)
 
 
-# def serialize_choices(choices_class):
-#     return [
-#         OrderedDict(value=value, label=label)
-#         for value, label in choices_class.choices
-#     ]
+def parse_room_code(code: str) -> str:
+    match = re.match(r"^(\d+)FR(\d+)$", code, re.IGNORECASE)
+    if not match:
+        return code
+
+    floor, room = map(int, match.groups())
+    suffix = "th" if 10 <= floor % 100 <= 20 else {
+        1: "st", 2: "nd", 3: "rd"}.get(floor % 10, "th")
+    return f"{floor}{suffix} Floor, Room {room}"
+
+
+def format_date(date_obj):
+    """Return a human-readable date like 'January 1, 2001'."""
+    return date_format(date_obj, format='F j, Y') if date_obj else None
+
+
+def send_sms(phone_number, message):
+    payload = {
+        "api_token": settings.SMS_API_TOKEN,
+        "phone_number": phone_number,
+        "message": message,
+    }
+
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(settings.SMS_API_URL,
+                             json=payload, headers=headers)
+    response.raise_for_status()
+    return response.json()

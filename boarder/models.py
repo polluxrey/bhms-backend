@@ -1,8 +1,7 @@
 from django.db import models
 from bhms.utils import clean_text
-from bhms.choices import Sex, YearLevel
-
-# Create your models here.
+from bhms.choices import Sex, YearLevel, DegreeProgram
+from bhms.utils import path_and_rename
 
 
 class Boarder(models.Model):
@@ -21,7 +20,8 @@ class Boarder(models.Model):
     barangay = models.CharField(max_length=100)
 
     # Academic Information
-    degree_program = models.CharField(max_length=100)
+    degree_program = models.CharField(
+        max_length=10, choices=DegreeProgram.choices)
     year_level = models.CharField(max_length=10, choices=YearLevel.choices)
 
     # Contact Details
@@ -38,11 +38,22 @@ class Boarder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Profile Image
+    profile_photo = models.ImageField(
+        upload_to=path_and_rename("boarders"),
+        blank=True,
+        null=True
+    )
+
     @property
     def full_name(self):
         if self.middle_name:
-            return f"{self.first_name} {self.middle_name} {self.last_name}"
-        return f"{self.first_name} {self.last_name}"
+            return f"{self.last_name}, {self.first_name} {self.middle_name}"
+        return f"{self.last_name}, {self.first_name}"
+
+    @property
+    def full_address(self):
+        return f"{self.barangay}, {self.municipality}, {self.province}"
 
     def save(self, *args, **kwargs):
         if self._state.adding:
