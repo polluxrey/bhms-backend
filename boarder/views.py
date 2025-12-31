@@ -1,13 +1,17 @@
 from django.db.models import F, Q, Case, When, Value, IntegerField
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from boarder.models import Boarder
 from boarder.serializers import (
     BoarderNameSerializer, BoarderListSerializer, BoarderDisplaySerializer, BoarderDetailSerializer, BoarderPaymentsSerializer)
 from boarder.pagination import BoarderListPagination
-from django.db.models import OuterRef, Subquery, DateTimeField
+from django.db.models import OuterRef, Subquery
 from payment.models import Payment
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from bhms.choices import RoomNumber, DegreeProgram, YearLevel, School
+from rest_framework.decorators import action
 
 
 class ActiveBoarderNameListView(viewsets.ReadOnlyModelViewSet):
@@ -17,7 +21,7 @@ class ActiveBoarderNameListView(viewsets.ReadOnlyModelViewSet):
 
 
 class BoarderViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Boarder.objects.all().order_by(
         '-is_active', 'last_name', 'first_name', 'middle_name')
     pagination_class = BoarderListPagination
@@ -34,19 +38,72 @@ class BoarderViewSet(viewsets.ModelViewSet):
 
         last_name = self.request.query_params.get('last_name')
         first_name = self.request.query_params.get('first_name')
+        room_number = self.request.query_params.get('room_number')
         is_active = self.request.query_params.get('is_active')
 
         if last_name:
             queryset = queryset.filter(
-                last_name__iexact=last_name.strip().upper())
+                last_name__icontains=last_name.strip())
         if first_name:
             queryset = queryset.filter(
-                first_name__iexact=first_name.strip().upper())
+                first_name__icontains=first_name.strip())
+        if room_number:
+            queryset = queryset.filter(
+                room_number__icontains=room_number.strip())
         if is_active is not None:
             is_active_bool = is_active.lower() == 'true'
             queryset = queryset.filter(is_active=is_active_bool)
 
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        boarder = serializer.save()
+
+        return Response(
+            {
+                "id": boarder.id,
+                "message": "Boarder created successfully"
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    @action(detail=True, methods=['get', 'patch'])
+    def full(self, request, pk=None):
+        boarder = self.get_object()
+
+        if request.method == 'GET':
+            serializer = BoarderDetailSerializer(
+                boarder, context={'request': request})
+            return Response(serializer.data)
+
+        elif request.method == 'PATCH':
+            serializer = BoarderDetailSerializer(
+                boarder, data=request.data, partial=True, context={'request': request}
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'])
+    def upload_profile_photo(self, request, pk=None):
+        boarder = self.get_object()
+
+        file = request.FILES.get("profile_photo")
+        if not file:
+            return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+
+        boarder.profile_photo = file
+        boarder.save()
+
+        photo_url = request.build_absolute_uri(boarder.profile_photo.url)
+
+        return Response({
+            "message": "Profile photo uploaded successfully",
+            "profile_photo_url": photo_url,
+        })
 
 
 class BoardersPaymentsViewSet(viewsets.ModelViewSet):
@@ -143,3 +200,39 @@ class BoardersPaymentsViewSet(viewsets.ModelViewSet):
                 nulls_last_case, F(primary_field).desc(), *fields[1:])
 
         return queryset
+
+
+class RoomNumberAPIView(APIView):
+    def get(self, request):
+        data = [
+            {"value": choice[0], "label": choice[1]}
+            for choice in RoomNumber.choices
+        ]
+        return Response(data)
+
+
+class DegreeProgramAPIView(APIView):
+    def get(self, request):
+        data = [
+            {"value": choice[0], "label": choice[1]}
+            for choice in DegreeProgram.choices
+        ]
+        return Response(data)
+
+
+class YearLevelAPIView(APIView):
+    def get(self, request):
+        data = [
+            {"value": choice[0], "label": choice[1]}
+            for choice in YearLevel.choices
+        ]
+        return Response(data)
+
+
+class SchoolAPIView(APIView):
+    def get(self, request):
+        data = [
+            {"value": choice[0], "label": choice[1]}
+            for choice in School.choices
+        ]
+        return Response(data)

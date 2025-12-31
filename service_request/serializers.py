@@ -44,3 +44,23 @@ class ServiceRequestDetailSerializer(serializers.ModelSerializer):
 class ServiceRequestTypeSerializer(serializers.Serializer):
     value = serializers.CharField(max_length=15)
     label = serializers.CharField(max_length=25)
+
+
+class ServiceRequestListSerializer(serializers.ModelSerializer):
+    boarder_full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ServiceRequest
+        fields = [
+            "reference_number",
+            "boarder_full_name",
+            "request_type",
+            "status",
+            "created_at",
+        ]
+
+    def get_boarder_full_name(self, obj):
+        boarder = obj.boarder
+        if boarder.middle_name:
+            return f"{boarder.last_name}, {boarder.first_name} {boarder.middle_name}"
+        return f"{boarder.last_name}, {boarder.first_name}"

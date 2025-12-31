@@ -1,5 +1,6 @@
+from django.urls import path
 from rest_framework.routers import SimpleRouter
-from boarder.views import ActiveBoarderNameListView, BoarderViewSet, BoardersPaymentsViewSet
+from boarder.views import ActiveBoarderNameListView, BoarderViewSet, BoardersPaymentsViewSet, RoomNumberAPIView, DegreeProgramAPIView, YearLevelAPIView, SchoolAPIView
 
 router = SimpleRouter()
 router.register(r'names', ActiveBoarderNameListView,
@@ -9,4 +10,15 @@ router.register(r'boarders-payments', BoardersPaymentsViewSet,
 router.register(r'', BoarderViewSet, basename='boarder')
 
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('rooms/', RoomNumberAPIView.as_view(),
+         name='room-numbers'),
+    path('academic-programs/', DegreeProgramAPIView.as_view(),
+         name='academic-programs'),
+    path('year-levels/', YearLevelAPIView.as_view(),
+         name='year-levels'),
+    path('schools/', SchoolAPIView.as_view(),
+         name='year-levels'),
+]
+
+urlpatterns += router.urls

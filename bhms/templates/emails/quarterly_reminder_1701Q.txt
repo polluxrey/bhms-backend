@@ -1,0 +1,33 @@
+{% load custom_filters %}
+Dear {{ first_name }},
+
+Your 1701Q (Quarterly Income Tax Return) for Q{{ tax_quarter }} {{ tax_year }} is coming due. 
+
+FILING DEADLINE: On or before {{ deadline_month }} 15
+
+TAX INFORMATION SUMMARY
+Mixed income earner: {{ is_mixed_income|yesno:"Yes,No" }}
+Income tax computation: {{ income_tax_rate }}
+{% if income_tax_rate == "GRADUATED" %}
+Uses standard deduction: {{ applies_osd|yesno:"Yes,No" }}
+{% endif %}
+
+{% if previously_paid_taxes_count %}
+PAYMENT HISTORY ({{ tax_year }})
+Number of payments made: {{ previously_paid_taxes_count }}
+Total taxes paid: PHP{{ previously_paid_taxes | currency }}
+Total income declared to date: PHP{{ recent_declared_amount | currency }}
+{% endif %}
+
+CURRENT QUARTER ASSESSMENT (Q{{ tax_quarter }})
+Quarterly income: PHP{{ quarter_income | currency }}
+Year-to-date estimated income: PHP{{ estimated_total | currency }}
+{% if not applies_osd %}
+Year-to-date expenses: PHP{{ itemized_expenses_ytd | currency }}
+{% endif %}
+Estimated income tax payable: PHP{{ tax_payable | currency }}
+
+Note: These amounts are estimates and subject to verification. Any payments not yet recorded may affect the computed tax.
+
+Thank you,
+{{ boarding_house_name | safe }}

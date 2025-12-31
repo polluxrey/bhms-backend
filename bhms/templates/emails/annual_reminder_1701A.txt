@@ -1,0 +1,29 @@
+{% load custom_filters %}
+Dear {{ first_name }},
+
+Your 1701A (Annual Income Tax Return for Individuals Earning Income Purely From Business/Profession) for Year {{ tax_year }} is coming due.
+
+FILING DEADLINE: On or before {{ deadline_month }} 15
+
+TAX INFORMATION SUMMARY
+Income tax computation: {{ income_tax_rate_label }}
+{% if income_tax_rate == "GRADUATED" %}
+Uses standard deduction: {{ applies_osd|yesno:"Yes,No" }}
+{% endif %}
+
+{% if previously_paid_taxes_count %}
+PAYMENT HISTORY ({{ tax_year }})
+Number of payments made: {{ previously_paid_taxes_count }}
+Total taxes paid: PHP{{ previously_paid_taxes }}
+Total income declared to date: PHP{{ recent_declared_amount | currency }}
+
+{% endif %}
+TAX ASSESSMENT
+Income (Q4): PHP{{ quarter_income | currency }}
+Income ({{ tax_year }}): PHP{{ estimated_total | currency }}
+Income tax payable ({{ tax_year }}): PHP{{ tax_payable | currency }}
+
+Note: These amounts are estimates and subject to verification. Any payments not yet recorded may affect the computed tax.
+
+Thank you,
+{{ boarding_house_name | safe }}

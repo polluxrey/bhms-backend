@@ -1,6 +1,6 @@
 from django.db import models
 from bhms.utils import clean_text
-from bhms.choices import Sex, YearLevel, DegreeProgram
+from bhms.choices import Sex, YearLevel, DegreeProgram, RoomNumber, BoarderRole
 from bhms.utils import path_and_rename
 
 
@@ -15,24 +15,33 @@ class Boarder(models.Model):
     sex = models.CharField(max_length=1, choices=Sex.choices)
 
     # Address
+    region = models.CharField(
+        max_length=100, default="17", blank=True, null=True)
     province = models.CharField(max_length=100)
-    municipality = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
     barangay = models.CharField(max_length=100)
 
     # Academic Information
     degree_program = models.CharField(
-        max_length=10, choices=DegreeProgram.choices)
-    year_level = models.CharField(max_length=10, choices=YearLevel.choices)
+        max_length=10, choices=DegreeProgram.choices, blank=True, null=True)
+    year_level = models.CharField(
+        max_length=10, choices=YearLevel.choices, blank=True, null=True)
 
     # Contact Details
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, unique=True)
 
     # Boarding Details
-    room_number = models.CharField(max_length=10)
+    room_number = models.CharField(max_length=10, choices=RoomNumber.choices)
     move_in_date = models.DateField()
     move_out_date = models.DateField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    role = models.CharField(
+        max_length=20,
+        choices=BoarderRole.choices,
+        blank=True,
+        null=True,
+    )
 
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -60,10 +69,7 @@ class Boarder(models.Model):
             self.last_name = clean_text(self.last_name)
             self.first_name = clean_text(self.first_name)
             self.middle_name = clean_text(self.middle_name)
-            self.province = clean_text(self.province)
-            self.municipality = clean_text(self.municipality)
-            self.barangay = clean_text(self.barangay)
-            self.degree_program = clean_text(self.degree_program)
+            # self.degree_program = clean_text(self.degree_program)
             self.email = clean_text(
                 self.email, uppercase=False, lowercase=True)
 

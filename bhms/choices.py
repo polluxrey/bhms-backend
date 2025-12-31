@@ -8,6 +8,8 @@ class Sex(models.TextChoices):
 
 
 class YearLevel(models.TextChoices):
+    G11 = "G11", "Grade 11"
+    G12 = "G12", "Grade 12"
     FIRST = "FIRST", "1st Year"
     SECOND = "SECOND", "2nd Year"
     THIRD = "THIRD", "3rd Year"
@@ -41,6 +43,16 @@ class DegreeProgram(models.TextChoices):
     BTLED = "BTLEd", "Bachelor of Technology and Livelihood Education"
 
 
+class RoomNumber(models.TextChoices):
+    F1 = "1F", "1st floor"
+    F2R1 = "2FR1", "2nd floor, Room 1"
+    F2R2 = "2FR2", "2nd floor, Room 2"
+    F2R3 = "2FR3", "2nd floor, Room 3"
+    F3R1 = "3FR1", "3rd floor, Room 1"
+    F3R2 = "3FR2", "3rd floor, Room 2"
+    F3R3 = "3FR3", "3rd floor, Room 3"
+
+
 class PaymentStatus(models.TextChoices):
     PENDING_REVIEW = "PENDING", "Pending Review"
     CONFIRMED = "CONFIRMED", "Confirmed"
@@ -60,3 +72,28 @@ class RequestStatus(models.TextChoices):
     IN_PROGRESS = "IN_PROGRESS", "In Progress"
     RESOLVED = "RESOLVED", "Resolved"
     REJECTED = "REJECTED", "Rejected"
+
+
+class BoarderRole(models.TextChoices):
+    REGULAR = "REGULAR", "Regular"
+    STUDENT = "STUDENT", "Student"
+
+
+class School(models.TextChoices):
+    ESTI = "ESTI", "Educational Systems Technological Institute"
+    MARSU = "MARSU", "Marinduque State University"
+    MNHS = "MNHS", "Marinduque National High School"
+    SMCM = "SMCM", "St. Mary's College of Marinduque"
+
+
+class IncomeTaxRateOption(models.TextChoices):
+    EIGHT_PERCENT = "8_PERCENT", "8% Flat Income Tax"
+    GRADUATED = "GRADUATED", "Graduated Income Tax"
+
+
+class TaxFormCode(models.TextChoices):
+    FORM_1701 = "1701", "1701 - Annual Income Tax Return (Mixed Income)"
+    FORM_1701A = "1701A", "1701A - Annual Income Tax Return"
+    FORM_1701Q = "1701Q", "1701Q - Quarterly Income Tax Return"
+    FORM_2551Q = "2551Q", "2551Q - Quarterly Percentage Tax Return"
+    OTHER = "OTHER", "Other / Misc Tax"

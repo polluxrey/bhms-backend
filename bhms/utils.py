@@ -67,14 +67,22 @@ def send_email(
 
 
 def parse_room_code(code: str) -> str:
-    match = re.match(r"^(\d+)FR(\d+)$", code, re.IGNORECASE)
+    match = re.match(r"^(\d+)F(?:R(\d+))?$", code, re.IGNORECASE)
     if not match:
         return code
 
-    floor, room = map(int, match.groups())
+    floor = int(match.group(1))
+    room = match.group(2)  # None if no room part
+
+    # Determine floor suffix
     suffix = "th" if 10 <= floor % 100 <= 20 else {
-        1: "st", 2: "nd", 3: "rd"}.get(floor % 10, "th")
-    return f"{floor}{suffix} Floor, Room {room}"
+        1: "st", 2: "nd", 3: "rd"
+    }.get(floor % 10, "th")
+
+    if room:
+        return f"{floor}{suffix} Floor, Room {int(room)}"
+    else:
+        return f"{floor}{suffix} Floor"
 
 
 def format_date(date_obj):
@@ -85,13 +93,19 @@ def format_date(date_obj):
 def send_sms(phone_number, message):
     payload = {
         "api_token": settings.SMS_API_TOKEN,
+        "sender_name": settings.SMS_API_SENDER_NAME,
         "phone_number": phone_number,
         "message": message,
     }
 
     headers = {"Content-Type": "application/json"}
 
-    response = requests.post(settings.SMS_API_URL,
-                             json=payload, headers=headers)
+    response = requests.post(
+        settings.SMS_API_URL,
+        json=payload,
+        headers=headers,
+        proxies={"https": None},
+        timeout=10
+    )
     response.raise_for_status()
     return response.json()

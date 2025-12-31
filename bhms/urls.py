@@ -29,7 +29,7 @@ urlpatterns = [
     path("api/module/", include("module.urls")),
     path("api/otp/", include("otp.urls")),
     path("api/payment/", include("payment.urls")),
-    path("api/request/", include("service_request.urls")),
+    path("api/requests/", include("service_request.urls")),
     path("api/auth/", include("users.urls")),
     path("api/users/current/", CurrentUserView.as_view(), name="current_user"),
 ]

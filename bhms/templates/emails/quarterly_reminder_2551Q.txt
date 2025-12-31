@@ -1,0 +1,16 @@
+{% load custom_filters %}
+Dear {{ first_name }},
+
+Your 2551Q (Quarterly Percentage Tax Return) for Q{{ tax_quarter }} {{ tax_year }} is coming due. 
+
+FILING DEADLINE: On or before {{ deadline_month }} 25
+
+QUARTER ASSESSMENT
+Covered period: {{ quarter_start_month }}-{{ quarter_end_month }} {{ tax_year }}
+Quarterly income: {{ quarter_income | currency }}
+Estimated income tax payable: {{ tax_payable | currency }}
+
+Note: These amounts are estimates and subject to verification. Any payments not yet recorded may affect the computed tax.
+
+Thank you,
+{{ boarding_house_name | safe }}

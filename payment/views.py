@@ -39,24 +39,33 @@ class PaymentView(APIView):
                 "description": instance.description,
             }
 
-            send_email(
-                subject="Your Payment Has Been Submitted",
-                to=[instance.boarder.email],
-                template_name="emails/payment_submitted.txt",
-                context=context,
-                from_email=settings.EMAIL_HOST_USER,
-            )
+            try:
+                send_email(
+                    subject="Your Payment Has Been Submitted",
+                    to=[instance.boarder.email],
+                    template_name="emails/payment_submitted.txt",
+                    context=context,
+                    from_email=settings.EMAIL_HOST_USER,
+                )
+            except Exception as e:
+                logging.error(
+                    f"Failed to send email to {instance.boarder.email}: {e}")
 
             owners = User.objects.filter(groups__name="Owner")
 
             for owner in owners:
-                send_email(
-                    subject="New Payment Submitted",
-                    to=[owner.email],
-                    template_name="emails/new_payment_notification.txt",
-                    context={**context, "owner_first_name": owner.first_name},
-                    from_email=settings.EMAIL_HOST_USER,
-                )
+                try:
+                    send_email(
+                        subject="New Payment Submitted",
+                        to=[owner.email],
+                        template_name="emails/new_payment_notification.txt",
+                        context={**context,
+                                 "owner_first_name": owner.first_name},
+                        from_email=settings.EMAIL_HOST_USER,
+                    )
+                except Exception as e:
+                    logging.error(
+                        f"Failed to send email to {owner.email}: {e}")
 
             return Response({'message': 'Data saved successfully!'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -164,7 +173,7 @@ class UpdatePaymentStatusView(APIView):
 
         sent = False
 
-        if not phone_number:
+        if phone_number:
             context = {
                 "amount": payment.amount,
                 "payment_type_name": payment.payment_type.name,

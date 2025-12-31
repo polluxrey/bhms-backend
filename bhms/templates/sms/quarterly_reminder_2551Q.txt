@@ -1,0 +1,2 @@
+{% load custom_filters %}
+[From RBH] Your 2551Q tax for Q{{ tax_quarter }} is due. Estimated tax: PHP {{ tax_payable | currency }}. Check your email for full details.

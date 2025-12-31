@@ -43,7 +43,7 @@ class BoarderDisplaySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Boarder
-        fields = ["full_name", "date_of_birth", "sex",
+        fields = ["id", "full_name", "date_of_birth", "sex",
                   "full_address", "degree_program", "year_level", "email", "phone_number", "room_number", "move_in_date", "move_out_date", "is_active", "profile_photo_url"]
 
     def get_date_of_birth(self, obj):
@@ -69,9 +69,23 @@ class BoarderDisplaySerializer(serializers.ModelSerializer):
 
 
 class BoarderDetailSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(read_only=True)
+    profile_photo_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Boarder
         fields = '__all__'
+        read_only_fields = ['full_name']
+
+    def get_profile_photo_url(self, obj):
+        request = self.context.get('request')
+
+        if obj.profile_photo and getattr(obj.profile_photo, 'url', None):
+            url = obj.profile_photo.url
+        else:
+            url = f"{settings.MEDIA_URL}assets/default-profile-photo.png"
+
+        return request.build_absolute_uri(url) if request else url
 
 
 class BoarderPaymentsSerializer(serializers.ModelSerializer):

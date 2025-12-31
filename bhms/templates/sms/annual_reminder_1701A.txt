@@ -1,0 +1,2 @@
+{% load custom_filters %}
+[From RBH] Your 1701A tax for {{ tax_year }} is due. Estimated tax: PHP {{ tax_payable | currency }}. Check your email for full details.
