@@ -176,6 +176,12 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'users.User'
 
-SMS_API_URL = os.getenv(
-    "SMS_API_URL", "https://sms.iprogtech.com/api/v1/sms_messages")
-SMS_API_TOKEN = os.getenv("SMS_API_TOKEN")
+# SMS_API_URL = os.getenv(
+#     "SMS_API_URL", "https://sms.iprogtech.com/api/v1/sms_messages")
+# SMS_API_TOKEN = os.getenv("SMS_API_TOKEN")
+# SMS_API_SENDER_NAME = os.getenv(key="SMS_API_SENDER_NAME")
+
+SEMAPHORE_API_URL = os.getenv(
+    "SEMAPHORE_API_URL", "https://api.semaphore.co/api/v4/messages")
+SEMAPHORE_API_TOKEN = os.getenv("SEMAPHORE_API_TOKEN")
+SEMAPHORE_API_SENDER_NAME = os.getenv("SEMAPHORE_API_SENDER_NAME")

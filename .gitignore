@@ -1,5 +1,6 @@
 .env
 *.sqlite3
+bhms/settings.py
 /media/
 /tasks/
 /taxes/

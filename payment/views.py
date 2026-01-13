@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from payment.models import Payment, PaymentType, PaymentMethod
 from payment.serializers import PaymentSerializer, PaymentListSerializer, PaymentTypeSerializer, PaymentMethodSerializer
 from payment.pagination import PaymentPagination
-from bhms.utils import send_email, send_sms
+from bhms.utils import send_email, send_sms_semaphore
 from django.conf import settings
 from users.models import User
 from rest_framework.response import Response
@@ -184,8 +184,8 @@ class UpdatePaymentStatusView(APIView):
                 "sms/payment_status_update.txt", context).strip()
 
             try:
-                response = send_sms(phone_number, message)
-                if response and response.get("status") == 200:
+                response = send_sms_semaphore(phone_number, message)
+                if response and response[0].get("status") == "Sent":
                     sent = True
             except Exception as e:
                 logging.error(f"Failed to send SMS to {phone_number}: {e}")

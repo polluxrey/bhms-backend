@@ -90,22 +90,25 @@ def format_date(date_obj):
     return date_format(date_obj, format='F j, Y') if date_obj else None
 
 
-def send_sms(phone_number, message):
+def send_sms_semaphore(phone_number, message):
     payload = {
-        "api_token": settings.SMS_API_TOKEN,
-        "sender_name": settings.SMS_API_SENDER_NAME,
-        "phone_number": phone_number,
+        "apikey": settings.SEMAPHORE_API_TOKEN,
+        "number": phone_number,
         "message": message,
+        "sendername": settings.SEMAPHORE_API_SENDER_NAME
     }
 
     headers = {"Content-Type": "application/json"}
 
     response = requests.post(
-        settings.SMS_API_URL,
+        settings.SEMAPHORE_API_URL,
         json=payload,
         headers=headers,
         proxies={"https": None},
-        timeout=10
+        timeout=15
     )
-    response.raise_for_status()
+
+    resp_json = response.json()
+    print("Semaphore response:", resp_json)
+
     return response.json()
