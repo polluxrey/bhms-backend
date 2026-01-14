@@ -104,7 +104,7 @@ def send_sms_semaphore(phone_number, message):
         settings.SEMAPHORE_API_URL,
         json=payload,
         headers=headers,
-        proxies={"https": None},
+        # proxies={"https": None},
         timeout=15
     )
 

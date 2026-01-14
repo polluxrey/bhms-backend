@@ -149,6 +149,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Allow your frontend to connect
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "https://reys-boarding-house.vercel.app"
 ]
 CORS_ALLOW_CREDENTIALS = True
 

@@ -101,33 +101,33 @@ class SendOTPAPIView_v2(APIView):
                 is_active=True,
             ).update(is_active=False)
 
-            if boarder.phone_number:
-                if self.is_rate_limited(boarder, 'sms'):
-                    return Response(
-                        {'error': 'Too many OTP requests via SMS. Try again later.'},
-                        status=status.HTTP_429_TOO_MANY_REQUESTS
-                    )
+            # if boarder.phone_number:
+            #     if self.is_rate_limited(boarder, 'sms'):
+            #         return Response(
+            #             {'error': 'Too many OTP requests via SMS. Try again later.'},
+            #             status=status.HTTP_429_TOO_MANY_REQUESTS
+            #         )
 
-                sms_response = send_sms_semaphore(
-                    message=f'Your OTP is {otp_code}',
-                    phone_number=boarder.phone_number
-                )
+            #     sms_response = send_sms_semaphore(
+            #         message=f'Your OTP is {otp_code}',
+            #         phone_number=boarder.phone_number
+            #     )
 
-                if sms_response and sms_response[0].get("status") in ["Sent", "Pending"]:
-                    OTP.objects.create(
-                        boarder=boarder,
-                        code=otp_code,
-                        channel=OTP.Channel.SMS,
-                    )
+            #     if sms_response and sms_response[0].get("status") in ["Sent", "Pending"]:
+            #         OTP.objects.create(
+            #             boarder=boarder,
+            #             code=otp_code,
+            #             channel=OTP.Channel.SMS,
+            #         )
 
-                    return Response(
-                        data={
-                            'otp_channel': OTP.Channel.SMS,
-                            'status': 'otp_sent',
-                            'phone_suffix': boarder.phone_number[-3:]
-                        },
-                        status=status.HTTP_200_OK
-                    )
+            #         return Response(
+            #             data={
+            #                 'otp_channel': OTP.Channel.SMS,
+            #                 'status': 'otp_sent',
+            #                 'phone_suffix': boarder.phone_number[-3:]
+            #             },
+            #             status=status.HTTP_200_OK
+            #         )
 
             if boarder.email:
                 if self.is_rate_limited(boarder, 'email'):

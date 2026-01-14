@@ -14,6 +14,9 @@ from rest_framework.permissions import IsAuthenticated
 import logging
 from django.template.loader import render_to_string
 from rest_framework.generics import RetrieveAPIView
+from boarder.models import Boarder
+from django.db import transaction
+
 
 # Create your views here.
 # views.py
@@ -69,6 +72,100 @@ class PaymentView(APIView):
 
             return Response({'message': 'Data saved successfully!'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PaymentView_v2(APIView):
+    def post(self, request):
+        serializer = PaymentSerializer(
+            data=request.data,
+            fields=["boarder", "payment_type", "payment_method",
+                    "amount", "description", "receipt"]
+        )
+        serializer.is_valid(raise_exception=True)
+
+        instance = serializer.save()
+        boarder = instance.boarder
+
+        sent = False
+
+        boarder_context = {
+            "first_name": boarder.first_name,
+            "payment_type": instance.payment_type.name,
+            "payment_method": instance.payment_method.name,
+            "amount": instance.amount,
+            "description": instance.description,
+        }
+
+        if boarder.phone_number:
+            sms_context = {
+                "amount": instance.amount,
+                "payment_type_name": instance.payment_type.name,
+                "status": "SUBMITTED"
+            }
+            message = render_to_string(
+                "sms/payment_status_update.txt",
+                sms_context
+            ).strip()
+
+            try:
+                sms_response = send_sms_semaphore(
+                    message=message,
+                    phone_number=boarder.phone_number
+                )
+
+                if sms_response and sms_response[0].get("status") in ["Sent", "Pending"]:
+                    sent = True
+                else:
+                    logging.error(
+                        f"Failed to send SMS to {boarder.phone_number}"
+                    )
+            except Exception as e:
+                logging.error(
+                    f"Failed to send SMS to {boarder.phone_number}: {e}"
+                )
+
+        if not sent and boarder.email:
+            try:
+                sent_count = send_email(
+                    subject="Your Payment Has Been Submitted",
+                    to=[instance.boarder.email],
+                    template_name="emails/payment_submitted.txt",
+                    context=boarder_context,
+                    from_email=settings.EMAIL_HOST_USER,
+                )
+
+                if sent_count >= 1:
+                    sent = True
+            except Exception as e:
+                logging.error(
+                    f"Failed to send email to {boarder.email}: {e}"
+                )
+
+        owners = User.objects.filter(groups__name="Owner")
+        for owner in owners:
+            owner_context = {
+                **boarder_context,
+                "full_name": boarder.full_name,
+                "owner_first_name": owner.first_name
+            }
+
+            try:
+                send_email(
+                    subject="New Payment Submitted",
+                    to=[owner.email],
+                    template_name="emails/new_payment_notification.txt",
+                    context=owner_context,
+                    from_email=settings.EMAIL_HOST_USER,
+                )
+            except Exception as e:
+                logging.error(
+                    f"Failed to send email to {owner.email}: {e}"
+                )
+
+        return Response(
+            {'message': 'Data saved successfully!'},
+            status=status.HTTP_201_CREATED
+        )
 
 
 class PaymentListCreateView(generics.ListAPIView):

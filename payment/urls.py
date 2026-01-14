@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
-from payment.views import PaymentView, PaymentListCreateView, ActivePaymentTypeListView, ActivePaymentMethodListView, BoarderPaymentsListView, UpdatePaymentStatusView, PaymentDetailView
+from payment.views import PaymentView, PaymentListCreateView, ActivePaymentTypeListView, ActivePaymentMethodListView, BoarderPaymentsListView, UpdatePaymentStatusView, PaymentDetailView, PaymentView_v2
 
 router = SimpleRouter()
 router.register(r'types', ActivePaymentTypeListView,
@@ -9,7 +9,7 @@ router.register(r'methods', ActivePaymentMethodListView,
                 basename='active-payment-methods')
 
 urlpatterns = [
-    path('pay/', PaymentView.as_view(), name='pay'),
+    path('pay/', PaymentView_v2.as_view(), name='pay'),
     path("payments/", PaymentListCreateView.as_view(), name="payment-list-create"),
     path("boarder-payments/", BoarderPaymentsListView.as_view(),
          name="boarder-payments"),
